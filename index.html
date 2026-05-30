@@ -12,12 +12,19 @@
 }
 
 html,
-body,
-#calendar {
+body {
     width: 100%;
     height: 100%;
     margin: 0;
     padding: 0;
+}
+
+#calendar {
+    width: 100%;
+    height: 100%;
+
+    display: flex;
+    flex-direction: column;
 }
 
 body {
@@ -27,22 +34,41 @@ body {
     overflow: hidden;
 }
 
+.calendar-header {
+    display: flex;
+    justify-content: center;
+    align-items: baseline;
+    gap: 8px;
+
+    height: 30px;
+    margin-bottom: 4px;
+
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.calendar-year {
+    font-size: 13px;
+    color: rgba(255,255,255,0.45);
+}
+    
 .calendar-grid {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
-    grid-template-rows: 40px repeat(6, 1fr);
+    grid-template-rows: 40px repeat(6, minmax(0, 1fr));
     gap: 2px;
 
     width: 100%;
-    height: calc(100% - 2px);
+    flex: 1;
+    min-height: 0;
 }
 
 .day-name {
     display: flex;
+    justify-content: center;
     align-items: center;
 
     font-weight: bold;
-    padding: 2px;
     background: #333;
     border-radius: 4px;
 }
@@ -51,7 +77,6 @@ body {
     font-weight: bold;
     margin-bottom: 4px;
     color: #f7a2da;
-    padding-left: 2px;
 }
 
 .calendar-day {
@@ -70,13 +95,6 @@ body {
     box-shadow:
         0 0 2px rgba(255,255,255,0.15),
         0 0 5px rgba(255,255,255,0.08);
-}
-
-.day-number {
-    font-weight: bold;
-    margin-bottom: 4px;
-    color: #f7a2da;
-    padding-left: 0;
 }
 
 .calendar-event {
@@ -209,9 +227,18 @@ if (event.start.date) {
         }
 
         eventsByDate[key].push(event);
-    });
+});
 
-    let html = `
+const monthName = now.toLocaleString("default", {
+    month: "long"
+});
+
+let html = `
+    <div class="calendar-header">
+        ${monthName}
+        <span class="calendar-year">${year}</span>
+    </div>
+
         <div class="calendar-grid">
             <div class="day-name">Mon</div>
             <div class="day-name">Tue</div>
