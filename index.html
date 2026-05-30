@@ -163,10 +163,18 @@ function renderEvents(events) {
 
     events.forEach(event => {
 
-        const start =
-            event.start.dateTime || event.start.date;
+        let date;
 
-        const date = new Date(start);
+if (event.start.date) {
+    const parts = event.start.date.split("-");
+    date = new Date(
+        Number(parts[0]),
+        Number(parts[1]) - 1,
+        Number(parts[2])
+    );
+} else {
+    date = new Date(event.start.dateTime);
+}
 
         const key =
             date.getFullYear() + "-" +
