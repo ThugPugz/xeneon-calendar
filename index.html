@@ -59,27 +59,21 @@ body {
 </style>
 
 <script src="https://apis.google.com/js/api.js"></script>
-<script src="https://accounts.google.com/gsi/client"></script>
+
 </head>
 
 <body>
 
-<button id="signin">Sign in with Google</button>
 <div id="calendar">
-    Click Sign In
+    Loading calendar...
 </div>
 
 <script>
-const CLIENT_ID = "552391667925-483mdcposp46quse930p5cc5enn9d8jn.apps.googleusercontent.com";
+
 const API_KEY = "AIzaSyANso--aCFdZdGTT3nYEchsVER2KUGHHGE";
 
 const DISCOVERY_DOC =
     "https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest";
-
-const SCOPES =
-    "https://www.googleapis.com/auth/calendar.readonly";
-
-let tokenClient;
 
 async function initGoogle() {
     try {
@@ -90,27 +84,8 @@ async function initGoogle() {
                     discoveryDocs: [DISCOVERY_DOC]
                 });
 
-                tokenClient = google.accounts.oauth2.initTokenClient({
-                    client_id: CLIENT_ID,
-                    scope: SCOPES,
-                    callback: async (resp) => {
-    console.log("OAuth response:", resp);
+                await loadEvents();
 
-    document.getElementById("signin").style.display = "none";
-
-    try {
-        await loadEvents();
-    } catch (err) {
-        console.error("loadEvents error:", err);
-        document.getElementById("calendar").innerHTML =
-            "Error loading events.";
-    }
-}
-                });
-
-                document.getElementById("signin").onclick = () => {
-    tokenClient.requestAccessToken();
-};
             } catch (err) {
                 console.error("Google init error:", err);
                 document.getElementById("calendar").innerHTML =
@@ -136,7 +111,7 @@ async function loadEvents() {
 
     const response =
         await gapi.client.calendar.events.list({
-            calendarId: "primary",
+            calendarId: "e375564db0eeb833828d26eb243128694362099650f0476566e26055a53f100d@group.calendar.google.com",
             timeMin: startOfMonth.toISOString(),
             timeMax: endOfMonth.toISOString(),
             maxResults: 250,
