@@ -118,6 +118,11 @@ body {
     text-overflow: ellipsis;
 }
 
+.calendar-event.past-event {
+    text-decoration: line-through;
+    opacity: 0.45;
+}    
+    
 .other-month {
     background: #181818;
 }
@@ -308,12 +313,40 @@ html += `
 
         dayEvents.forEach(event => {
 
-            html += `
-                <div class="calendar-event">
-                    ${event.summary || "Event"}
-                </div>
-            `;
-        });        
+    let eventDate;
+
+    if (event.start.date) {
+        const parts = event.start.date.split("-");
+        eventDate = new Date(
+            Number(parts[0]),
+            Number(parts[1]) - 1,
+            Number(parts[2])
+        );
+    } else {
+        eventDate = new Date(event.start.dateTime);
+    }
+
+    const eventDay = new Date(
+    eventDate.getFullYear(),
+    eventDate.getMonth(),
+    eventDate.getDate()
+);
+
+const todayDay = new Date(
+    now.getFullYear(),
+    now.getMonth(),
+    now.getDate()
+);
+
+const isPast = eventDay < todayDay;
+
+    
+    html += `
+        <div class="calendar-event ${isPast ? 'past-event' : ''}">
+            ${event.summary || "Event"}
+        </div>
+    `;
+});        
         
         html += `</div>`;
     }
@@ -336,12 +369,40 @@ for (let day = 1; day <= remainingCells; day++) {
     `;
 
     dayEvents.forEach(event => {
-        html += `
-            <div class="calendar-event">
-                ${event.summary || "Event"}
-            </div>
-        `;
-    });
+
+    let eventDate;
+
+    if (event.start.date) {
+        const parts = event.start.date.split("-");
+        eventDate = new Date(
+            Number(parts[0]),
+            Number(parts[1]) - 1,
+            Number(parts[2])
+        );
+    } else {
+        eventDate = new Date(event.start.dateTime);
+    }
+
+    const eventDay = new Date(
+    eventDate.getFullYear(),
+    eventDate.getMonth(),
+    eventDate.getDate()
+);
+
+const todayDay = new Date(
+    now.getFullYear(),
+    now.getMonth(),
+    now.getDate()
+);
+
+const isPast = eventDay < todayDay;
+
+    html += `
+        <div class="calendar-event ${isPast ? 'past-event' : ''}">
+            ${event.summary || "Event"}
+        </div>
+    `;
+});
 
     html += `</div>`;
 }
