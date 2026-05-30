@@ -229,11 +229,18 @@ html += `
                     ${event.summary || "Event"}
                 </div>
             `;
-        });
-
+        });        
+        
         html += `</div>`;
     }
 
+const totalCells = startWeekday + daysInMonth;
+const remainingCells = 42 - totalCells;
+
+for (let i = 0; i < remainingCells; i++) {
+    html += `<div class="calendar-day"></div>`;
+}
+    
     html += `</div>`;
 
     container.innerHTML = html;
