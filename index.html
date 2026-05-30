@@ -156,7 +156,7 @@ function renderEvents(events) {
     const firstDay = new Date(year, month, 1);
     const lastDay = new Date(year, month + 1, 0);
 
-    const startWeekday = firstDay.getDay();
+    const startWeekday = (firstDay.getDay() + 6) % 7;
     const daysInMonth = lastDay.getDate();
 
     const eventsByDate = {};
@@ -182,13 +182,13 @@ function renderEvents(events) {
 
     let html = `
         <div class="calendar-grid">
-            <div class="day-name">Sun</div>
             <div class="day-name">Mon</div>
             <div class="day-name">Tue</div>
             <div class="day-name">Wed</div>
             <div class="day-name">Thu</div>
             <div class="day-name">Fri</div>
             <div class="day-name">Sat</div>
+            <div class="day-name">Sun</div>
     `;
 
     for (let i = 0; i < startWeekday; i++) {
