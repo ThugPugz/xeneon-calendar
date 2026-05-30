@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Calendar Widget</title>
+
+<style>
+body {
+    margin: 0;
+    padding: 12px;
+    background: #111;
+    color: white;
+    font-family: Arial, sans-serif;
+}
+
+.calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 4px;
+}
+
+.day-name {
+    text-align: center;
+    font-weight: bold;
+    padding: 8px;
+    background: #333;
+    border-radius: 4px;
+}
+
+.calendar-day {
+    min-height: 100px;
+    background: #222;
+    border-radius: 6px;
+    padding: 6px;
+    overflow: hidden;
+}
+
+.today {
+    border: 2px solid #4fc3f7;
+    background: #2a3440;
+}
+
+.day-number {
+    font-weight: bold;
+    margin-bottom: 4px;
+    color: #f7a2da;
+}
+
+.calendar-event {
+    font-size: 12px;
+    background: #444;
+    border-radius: 4px;
+    padding: 2px 4px;
+    margin-bottom: 2px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+</style>
+
+<script src="https://apis.google.com/js/api.js"></script>
+<script src="https://accounts.google.com/gsi/client"></script>
+</head>
+
+<body>
+
+<button id="signin">Sign in with Google</button>
+<div id="calendar">
+    Click Sign In
+</div>
+
+<script>
+const CLIENT_ID = "552391667925-483mdcposp46quse930p5cc5enn9d8jn.apps.googleusercontent.com";
+const API_KEY = "AIzaSyANso--aCFdZdGTT3nYEchsVER2KUGHHGE";
+
+const DISCOVERY_DOC =
+    "https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest";
+
+const SCOPES =
+    "https://www.googleapis.com/auth/calendar.readonly";
+
+let tokenClient;
+
+async function initGoogle() {
+    try {
+        gapi.load("client", async () => {
+            try {
+                await gapi.client.init({
+                    apiKey: API_KEY,
+                    discoveryDocs: [DISCOVERY_DOC]
+                });
+
+                tokenClient = google.accounts.oauth2.initTokenClient({
+                    client_id: CLIENT_ID,
+                    scope: SCOPES,
+                    callback: async (resp) => {
+    console.log("OAuth response:", resp);
+
+    document.getElementById("signin").style.display = "none";
+
+    try {
+        await loadEvents();
+    } catch (err) {
+        console.error("loadEvents error:", err);
+        document.getElementById("calendar").innerHTML =
+            "Error loading events.";
+    }
+}
+                });
+
+                document.getElementById("signin").onclick = () => {
+    tokenClient.requestAccessToken();
+};
+            } catch (err) {
+                console.error("Google init error:", err);
+                document.getElementById("calendar").innerHTML =
+                    "Google initialization failed.";
+            }
+        });
+    } catch (err) {
+        console.error("Unexpected error:", err);
+        document.getElementById("calendar").innerHTML =
+            "Unexpected error.";
+    }
+}
+                
+
+async function loadEvents() {
+    const now = new Date();
+
+    const startOfMonth =
+        new Date(now.getFullYear(), now.getMonth(), 1);
+
+    const endOfMonth =
+        new Date(now.getFullYear(), now.getMonth() + 1, 1);
+
+    const response =
+        await gapi.client.calendar.events.list({
+            calendarId: "primary",
+            timeMin: startOfMonth.toISOString(),
+            timeMax: endOfMonth.toISOString(),
+            maxResults: 250,
+            singleEvents: true,
+            orderBy: "startTime"
+        });
+
+    renderEvents(response.result.items);
+}
+
+function renderEvents(events) {
+
+    const container = document.getElementById("calendar");
+
+    const now = new Date();
+
+    const year = now.getFullYear();
+    const month = now.getMonth();
+
+    const firstDay = new Date(year, month, 1);
+    const lastDay = new Date(year, month + 1, 0);
+
+    const startWeekday = firstDay.getDay();
+    const daysInMonth = lastDay.getDate();
+
+    const eventsByDate = {};
+
+    events.forEach(event => {
+
+        const start =
+            event.start.dateTime || event.start.date;
+
+        const date = new Date(start);
+
+        const key =
+            date.getFullYear() + "-" +
+            String(date.getMonth() + 1).padStart(2, "0") + "-" +
+            String(date.getDate()).padStart(2, "0");
+
+        if (!eventsByDate[key]) {
+            eventsByDate[key] = [];
+        }
+
+        eventsByDate[key].push(event);
+    });
+
+    let html = `
+        <div class="calendar-grid">
+            <div class="day-name">Sun</div>
+            <div class="day-name">Mon</div>
+            <div class="day-name">Tue</div>
+            <div class="day-name">Wed</div>
+            <div class="day-name">Thu</div>
+            <div class="day-name">Fri</div>
+            <div class="day-name">Sat</div>
+    `;
+
+    for (let i = 0; i < startWeekday; i++) {
+        html += `<div class="calendar-day"></div>`;
+    }
+
+    for (let day = 1; day <= daysInMonth; day++) {
+
+        const key =
+            year + "-" +
+            String(month + 1).padStart(2, "0") + "-" +
+            String(day).padStart(2, "0");
+
+        const isToday =
+    day === now.getDate() &&
+    month === now.getMonth() &&
+    year === now.getFullYear();
+
+html += `
+    <div class="calendar-day ${isToday ? 'today' : ''}">
+        <div class="day-number">${day}</div>
+`;
+        
+        const dayEvents = eventsByDate[key] || [];
+
+        dayEvents.forEach(event => {
+
+            html += `
+                <div class="calendar-event">
+                    ${event.summary || "Event"}
+                </div>
+            `;
+        });
+
+        html += `</div>`;
+    }
+
+    html += `</div>`;
+
+    container.innerHTML = html;
+}
+
+
+        
+
+initGoogle();
+</script>
+
+</body>
+</html>
