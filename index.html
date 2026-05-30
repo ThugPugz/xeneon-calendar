@@ -124,6 +124,14 @@ body {
 
 .other-month .day-number {
     color: #777;
+} 
+
+.previous-month {
+    background: #141414;
+}
+
+.previous-month .day-number {
+    color: #555;
 }    
 
 .month-title {
@@ -267,8 +275,16 @@ let html = `
         <div class="day-name">Sun</div>
 `;
 
-    for (let i = 0; i < startWeekday; i++) {
-    html += `<div class="calendar-day other-month"></div>`;
+    const prevMonthLastDay = new Date(year, month, 0).getDate();
+
+for (let i = 0; i < startWeekday; i++) {
+    const day = prevMonthLastDay - startWeekday + i + 1;
+
+    html += `
+        <div class="calendar-day previous-month">
+            <div class="day-number">${day}</div>
+        </div>
+    `;
 }
 
     for (let day = 1; day <= daysInMonth; day++) {
