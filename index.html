@@ -139,7 +139,7 @@ async function loadEvents() {
         new Date(now.getFullYear(), now.getMonth(), 1);
 
     const endOfMonth =
-        new Date(now.getFullYear(), now.getMonth() + 1, 1);
+    new Date(now.getFullYear(), now.getMonth() + 2, 1);
 
     const response =
         await gapi.client.calendar.events.list({
