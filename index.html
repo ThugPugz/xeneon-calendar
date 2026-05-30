@@ -119,7 +119,7 @@ body {
 }
 
 .other-month {
-    background: #1d1d1d;
+    background: #181818;
 }
 
 .other-month .day-number {
@@ -268,8 +268,8 @@ let html = `
 `;
 
     for (let i = 0; i < startWeekday; i++) {
-        html += `<div class="calendar-day"></div>`;
-    }
+    html += `<div class="calendar-day other-month"></div>`;
+}
 
     for (let day = 1; day <= daysInMonth; day++) {
 
