@@ -57,10 +57,53 @@ body {
 }
 
 .today {
-    border: 2px solid #ffffffcc;
+    position: relative;
     background: #2a3440;
+    border: 2px solid rgba(255,255,255,0.9);
+
+    box-shadow:
+        0 0 4px rgba(255,255,255,0.5),
+        0 0 8px rgba(255,255,255,0.3),
+        0 0 14px rgba(255,255,255,0.2);
+
+    animation: twinkle 2s ease-in-out infinite;
 }
 
+@keyframes twinkle {
+    0%, 100% {
+        box-shadow:
+            0 0 4px rgba(255,255,255,0.4),
+            0 0 8px rgba(255,255,255,0.2);
+    }
+    50% {
+        box-shadow:
+            0 0 8px rgba(255,255,255,0.8),
+            0 0 16px rgba(255,255,255,0.5),
+            0 0 24px rgba(255,255,255,0.3);
+    }
+}
+
+.today::after {
+    content: "✦";
+    position: absolute;
+    top: -4px;
+    right: -2px;
+    color: white;
+    font-size: 10px;
+    animation: sparkleStar 1.5s infinite;
+}
+
+@keyframes sparkleStar {
+    0%,100% {
+        opacity: 0.3;
+        transform: scale(0.8);
+    }
+    50% {
+        opacity: 1;
+        transform: scale(1.4);
+    }
+}
+    
 .day-number {
     font-weight: bold;
     margin-bottom: 4px;
