@@ -38,6 +38,7 @@ body {
 .calendar-header {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
+    gap: 2px;
 
     height: 30px;
     margin-bottom: 4px;
@@ -124,6 +125,13 @@ body {
 .other-month .day-number {
     color: #777;
 }    
+
+.month-title {
+    grid-column: 4;
+    justify-self: start;
+    padding-left: 4px;
+    letter-spacing: 0.5px;
+}
     
 </style>
 
@@ -244,13 +252,10 @@ const monthName = now.toLocaleString("default", {
 
 let html = `
     <div class="calendar-header">
-        <div style="
-            grid-column: 4;
-            justify-self: center;
-        ">
-            ${monthName}
-        </div>
+    <div class="month-title">
+        ${monthName}
     </div>
+</div>
 
     <div class="calendar-grid">
         <div class="day-name">Mon</div>
