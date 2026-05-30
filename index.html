@@ -78,6 +78,15 @@ body {
     overflow: hidden;
     text-overflow: ellipsis;
 }
+
+.other-month {
+    opacity: 0.45;
+}
+
+.other-month .day-number {
+    color: #888;
+}    
+    
 </style>
 
 <script src="https://apis.google.com/js/api.js"></script>
@@ -158,6 +167,9 @@ function renderEvents(events) {
 
     const startWeekday = (firstDay.getDay() + 6) % 7;
     const daysInMonth = lastDay.getDate();
+    const nextMonth = new Date(year, month + 1, 1);
+    const nextMonthYear = nextMonth.getFullYear();
+    const nextMonthMonth = nextMonth.getMonth();
 
     const eventsByDate = {};
 
@@ -237,8 +249,29 @@ html += `
 const totalCells = startWeekday + daysInMonth;
 const remainingCells = 42 - totalCells;
 
-for (let i = 0; i < remainingCells; i++) {
-    html += `<div class="calendar-day"></div>`;
+for (let day = 1; day <= remainingCells; day++) {
+
+    const key =
+        nextMonthYear + "-" +
+        String(nextMonthMonth + 1).padStart(2, "0") + "-" +
+        String(day).padStart(2, "0");
+
+    const dayEvents = eventsByDate[key] || [];
+
+    html += `
+        <div class="calendar-day other-month">
+            <div class="day-number">${day}</div>
+    `;
+
+    dayEvents.forEach(event => {
+        html += `
+            <div class="calendar-event">
+                ${event.summary || "Event"}
+            </div>
+        `;
+    });
+
+    html += `</div>`;
 }
     
     html += `</div>`;
