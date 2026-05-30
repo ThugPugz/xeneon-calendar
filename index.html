@@ -36,10 +36,8 @@ body {
 }
 
 .calendar-header {
-    display: flex;
-    justify-content: center;
-    align-items: baseline;
-    gap: 8px;
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
 
     height: 30px;
     margin-bottom: 4px;
@@ -244,19 +242,23 @@ const monthName = now.toLocaleString("default", {
 
 let html = `
     <div class="calendar-header">
-        ${monthName}
-    
+        <div style="
+            grid-column: 4;
+            justify-self: center;
+        ">
+            ${monthName}
+        </div>
     </div>
 
-        <div class="calendar-grid">
-            <div class="day-name">Mon</div>
-            <div class="day-name">Tue</div>
-            <div class="day-name">Wed</div>
-            <div class="day-name">Thu</div>
-            <div class="day-name">Fri</div>
-            <div class="day-name">Sat</div>
-            <div class="day-name">Sun</div>
-    `;
+    <div class="calendar-grid">
+        <div class="day-name">Mon</div>
+        <div class="day-name">Tue</div>
+        <div class="day-name">Wed</div>
+        <div class="day-name">Thu</div>
+        <div class="day-name">Fri</div>
+        <div class="day-name">Sat</div>
+        <div class="day-name">Sun</div>
+`;
 
     for (let i = 0; i < startWeekday; i++) {
         html += `<div class="calendar-day"></div>`;
