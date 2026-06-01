@@ -116,6 +116,7 @@ body {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    cursor: pointer;
 }
 
 .calendar-event.past-event {
@@ -144,6 +145,11 @@ body {
     justify-self: start;
     padding-left: 4px;
     letter-spacing: 0.5px;
+}
+
+.calendar-event.completed {
+    text-decoration: line-through;
+    opacity: 0.45;
 }
     
 </style>
@@ -340,12 +346,23 @@ const todayDay = new Date(
 
 const isPast = eventDay < todayDay;
 
-    
-    html += `
-        <div class="calendar-event ${isPast ? 'past-event' : ''}">
-            ${event.summary || "Event"}
-        </div>
-    `;
+const eventId =
+    key + "_" +
+    (event.summary || "Event");
+
+const completed =
+    localStorage.getItem(eventId) === "true";
+
+html += `
+    <div
+        class="calendar-event
+        ${isPast ? 'past-event' : ''}
+        ${completed ? 'completed' : ''}"
+        data-event-id="${eventId}"
+    >
+        ${event.summary || "Event"}
+    </div>
+`;
 });        
         
         html += `</div>`;
@@ -397,11 +414,23 @@ const todayDay = new Date(
 
 const isPast = eventDay < todayDay;
 
-    html += `
-        <div class="calendar-event ${isPast ? 'past-event' : ''}">
-            ${event.summary || "Event"}
-        </div>
-    `;
+    const eventId =
+    key + "_" +
+    (event.summary || "Event");
+
+const completed =
+    localStorage.getItem(eventId) === "true";
+
+html += `
+    <div
+        class="calendar-event
+        ${isPast ? 'past-event' : ''}
+        ${completed ? 'completed' : ''}"
+        data-event-id="${eventId}"
+    >
+        ${event.summary || "Event"}
+    </div>
+`;
 });
 
     html += `</div>`;
@@ -410,6 +439,22 @@ const isPast = eventDay < todayDay;
     html += `</div>`;
 
     container.innerHTML = html;
+    container.querySelectorAll(".calendar-event").forEach(el => {
+
+    if (el.classList.contains("past-event")) return;
+
+    el.addEventListener("click", () => {
+
+        el.classList.toggle("completed");
+
+        const eventId = el.dataset.eventId;
+
+        localStorage.setItem(
+            eventId,
+            el.classList.contains("completed")
+        );
+    });
+});
 }
 
 
